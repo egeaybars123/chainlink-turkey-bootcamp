@@ -1,6 +1,6 @@
 // SPDX-License-Identifier: MIT
 
-pragma solidity ^0.8.0;
+pragma solidity ^0.8.7;
 
 contract Integers {
     int public sayi_int;
@@ -54,17 +54,78 @@ contract Strings {
     }
 }
 
-contract AddressesBytes32 {
+contract Address {
     address public kontratSahibi;
-    bytes32 public deger;
 
     constructor() {
         kontratSahibi = msg.sender;
     }
-    
-    //0x436861696e6c696e6b205475726b657920426f6f7463616d7000000000000000
-    //Chainlink Turkey Bootcamp
-    function cevirme(bytes32 input) public {
-        deger = input;
+}
+
+contract Enum {
+
+    enum Okul {Ilkogretim, Lise, Universite, Mezun} //0,1,2,3
+    struct Ogrenci {
+        string isim;
+        Okul ogrenim;
+    }
+
+    Ogrenci public ogrenci;
+
+    function ogrenciDegistir(string memory isim, Okul okul) public {
+        ogrenci.isim = isim;
+        ogrenci.ogrenim = okul;
+    }
+
+    function ogrenciMezunEt() public {
+        ogrenci.ogrenim = Okul.Mezun;
+    }
+}
+
+contract Array {
+    address[] adresListesi; //dynamic: eklenecek adres sayısında kısıtlama yok.
+    address[2] statikListe; //statik: eklenebilecek maksimum adres sayısı belirtiliyor.
+
+    function dinamikEkle(address adres) public {
+        adresListesi.push(adres);
+    }
+
+    //statik array'lerde push fonksiyon bulunmuyor.
+    function statikEkle(address adres, uint index) public {
+        statikListe[index] = adres;
+    }
+
+    function dinamikUzunlukGoster() public view returns(uint) {
+        return adresListesi.length;
+    }
+
+    function statikUzunlukGoster() public view returns(uint) {
+        return statikListe.length;
+    }
+
+    function dinamikGoster() public view returns(address[] memory) {
+        return adresListesi;
+    }
+
+    function statikGoster() public view returns(address[2] memory) {
+        return statikListe;
+    }
+}
+
+contract Mapping {
+    mapping(address => uint256) public bakiye;
+    address public owner;
+
+    constructor() {
+        owner = msg.sender;
+    }
+
+    function bakiyeEkle(uint256 miktar, address adres) public sadeceKontratSahibi {
+        bakiye[adres] += miktar;
+    }
+
+    modifier sadeceKontratSahibi {
+        require(msg.sender == owner);
+        _;
     }
 }
