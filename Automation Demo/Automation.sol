@@ -70,9 +70,17 @@ contract Cekilis is AutomationCompatibleInterface, VRFConsumerBaseV2 {
     }
 
     function yarismayaKatil() external {
-        require(!cekilisRound[counter].durum[msg.sender], "Mevcut raunt icin katilim saglanmistir");
+        require(!cekilisRound[counter].durum[msg.sender], "Mevcut raunt icin zaten katilim saglanmistir");
         cekilisRound[counter].durum[msg.sender] = true;
+
         address[] storage liste = cekilisRound[counter].katilimcilar;
         liste.push(msg.sender);
+    }
+
+    function kazananiGor(uint raunt) public view returns(address kazanan) {
+        CekilisBilgileri storage roundBilgisi = cekilisRound[raunt];
+        uint sansliSayi = roundBilgisi.rastgeleSayi % roundBilgisi.katilimcilar.length;
+
+        kazanan = roundBilgisi.katilimcilar[sansliSayi];
     }
 }
